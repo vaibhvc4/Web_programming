@@ -9,7 +9,6 @@ const searchBtn = document.getElementById("searchBtn");
 const newsQuery = document.getElementById("newsQuery");
 const newsType = document.getElementById("newsType");
 const newsdetails = document.getElementById("newsdetails");
-const loader = document.getElementById("loader");
 
 // Array
 var newsDataArr = [];
@@ -28,6 +27,7 @@ window.onload = function() {
     newsType.innerHTML="<h4>Headlines</h4>";
     fetchHeadlines();
 };
+
 
 generalBtn.addEventListener("click",function(){
     newsType.innerHTML="<h4>General news</h4>";
@@ -60,8 +60,12 @@ searchBtn.addEventListener("click",function(){
 });
 
 const fetchHeadlines = async () => {
-    loader.classList.remove("d-none");
-    const response = await fetch(HEADLINES_NEWS+API_KEY);
+    const response = await fetch(HEADLINES_NEWS+API_KEY, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
     newsDataArr = [];
     if(response.status >=200 && response.status < 300) {
         const myJson = await response.json();
@@ -72,12 +76,18 @@ const fetchHeadlines = async () => {
         newsdetails.innerHTML = "<h5>No data found.</h5>"
         return;
     }
+
     displayNews();
 }
 
+
 const fetchGeneralNews = async () => {
-    loader.classList.remove("d-none");
-    const response = await fetch(GENERAL_NEWS+API_KEY);
+    const response = await fetch(GENERAL_NEWS+API_KEY, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
     newsDataArr = [];
     if(response.status >=200 && response.status < 300) {
         const myJson = await response.json();
@@ -88,12 +98,17 @@ const fetchGeneralNews = async () => {
         newsdetails.innerHTML = "<h5>No data found.</h5>"
         return;
     }
+
     displayNews();
 }
 
 const fetchBusinessNews = async () => {
-    loader.classList.remove("d-none");
-    const response = await fetch(BUSINESS_NEWS+API_KEY);
+    const response = await fetch(BUSINESS_NEWS+API_KEY, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
     newsDataArr = [];
     if(response.status >=200 && response.status < 300) {
         const myJson = await response.json();
@@ -104,15 +119,21 @@ const fetchBusinessNews = async () => {
         newsdetails.innerHTML = "<h5>No data found.</h5>"
         return;
     }
+
     displayNews();
 }
 
 const fetchEntertainmentNews = async () => {
-    loader.classList.remove("d-none");
-    const response = await fetch(ENTERTAINMENT_NEWS+API_KEY);
+    const response = await fetch(ENTERTAINMENT_NEWS+API_KEY, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
     newsDataArr = [];
     if(response.status >=200 && response.status < 300) {
         const myJson = await response.json();
+        console.log(myJson);
         newsDataArr = myJson.articles;
     } else {
         // handle errors
@@ -120,12 +141,17 @@ const fetchEntertainmentNews = async () => {
         newsdetails.innerHTML = "<h5>No data found.</h5>"
         return;
     }
+
     displayNews();
 }
 
 const fetchSportsNews = async () => {
-    loader.classList.remove("d-none");
-    const response = await fetch(SPORTS_NEWS+API_KEY);
+    const response = await fetch(SPORTS_NEWS+API_KEY, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
     newsDataArr = [];
     if(response.status >=200 && response.status < 300) {
         const myJson = await response.json();
@@ -136,12 +162,17 @@ const fetchSportsNews = async () => {
         newsdetails.innerHTML = "<h5>No data found.</h5>"
         return;
     }
+
     displayNews();
 }
 
 const fetchTechnologyNews = async () => {
-    loader.classList.remove("d-none");
-    const response = await fetch(TECHNOLOGY_NEWS+API_KEY);
+    const response = await fetch(TECHNOLOGY_NEWS+API_KEY, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
     newsDataArr = [];
     if(response.status >=200 && response.status < 300) {
         const myJson = await response.json();
@@ -152,40 +183,48 @@ const fetchTechnologyNews = async () => {
         newsdetails.innerHTML = "<h5>No data found.</h5>"
         return;
     }
+
     displayNews();
 }
 
 const fetchQueryNews = async () => {
+
     if(newsQuery.value == null)
         return;
 
-    loader.classList.remove("d-none");
-    const response = await fetch(SEARCH_NEWS+encodeURIComponent(newsQuery.value)+"&apiKey="+API_KEY);
+    const response = await fetch(SEARCH_NEWS+encodeURIComponent(newsQuery.value)+"&apiKey="+API_KEY, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
     newsDataArr = [];
-    if(response.status >=200 && response.status < 300) {
+    if(response.status >= 200 && response.status < 300) {
         const myJson = await response.json();
         newsDataArr = myJson.articles;
     } else {
-        // handle errors
+        //error handle
         console.log(response.status, response.statusText);
         newsdetails.innerHTML = "<h5>No data found.</h5>"
         return;
     }
+
     displayNews();
 }
 
 function displayNews() {
-    loader.classList.add("d-none");
+
     newsdetails.innerHTML = "";
 
-    if(newsDataArr.length == 0) {
-        newsdetails.innerHTML = "<h5>No data found.</h5>";
-        return;
-    }
+    // if(newsDataArr.length == 0) {
+    //     newsdetails.innerHTML = "<h5>No data found.</h5>"
+    //     return;
+    // }
 
     newsDataArr.forEach(news => {
-        var date = news.publishedAt.split("T");
 
+        var date = news.publishedAt.split("T");
+        
         var col = document.createElement('div');
         col.className="col-sm-12 col-md-4 col-lg-3 p-2 card";
 
@@ -204,22 +243,22 @@ function displayNews() {
         newsHeading.innerHTML = news.title;
 
         var dateHeading = document.createElement('h6');
-        dateHeading.className = "text-danger";
+        dateHeading.className = "text-primary";
         dateHeading.innerHTML = date[0];
 
-        var description = document.createElement('p');
-        description.className="text-muted";
-        description.innerHTML = news.description;
+        var discription = document.createElement('p');
+        discription.className="text-muted";
+        discription.innerHTML = news.description;
 
         var link = document.createElement('a');
-        link.className="btn btn-outline-danger";
+        link.className="btn btn-dark";
         link.setAttribute("target", "_blank");
         link.href = news.url;
         link.innerHTML="Read more";
 
         cardBody.appendChild(newsHeading);
         cardBody.appendChild(dateHeading);
-        cardBody.appendChild(description);
+        cardBody.appendChild(discription);
         cardBody.appendChild(link);
 
         card.appendChild(image);
@@ -229,4 +268,5 @@ function displayNews() {
 
         newsdetails.appendChild(col);
     });
+
 }
